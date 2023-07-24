@@ -1,14 +1,14 @@
 # mb2-thermometer: display current (chip) temperatures
 Bart Massey 2023
 
-This code prints the current temperature of the LSM303AGR
-accelerometer/magnetometer/thermometer chip in °F once per
-second.
+This code prints the current temperature of chips on the
+MicroBit v2 in °F once per second.  The LSM303AGR
+temperature unit and the CPU temperature unit are supported.
 
-* The `main` branch uses the `lsm303agr` crate.
+* The `main` branch uses the `lsm303agr` crate for the LSM303AGR.
 
-* The `twim` branch does raw i2c to demonstrate that
-  process.
+* The `twim` branch does raw i2c for the LSM303AGR to
+  demonstrate that process.
 
 ## Acknowledgements
 
