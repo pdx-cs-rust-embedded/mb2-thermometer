@@ -92,9 +92,15 @@ fn main() -> ! {
         i2c.write_read(ACC_ADDR, &payload, &mut temp).unwrap();
 
         // Convert the temperature data.
+        //
         // Start by swizzling the data into a form where the
         // registers are combined and then treated as a
         // signed fixed-point offset.
+        //
+        // The datasheet says "Temperature data is stored
+        // inside OUT_TEMP_H as // two’s complement data in
+        // 8-bit format left-justified." Apparently
+        // OUT_TEMP_L is also significant, as expected.
         let temp = (((temp[1] as u16) << 8) | temp[0] as u16) as i16;
         // Convert to fixed-point as a float.
         // Apparently the temperature needs to be offset by
