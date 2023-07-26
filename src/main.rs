@@ -5,7 +5,6 @@ use panic_rtt_target as _;
 use rtt_target::{rprint, rprintln, rtt_init_print};
 
 use cortex_m_rt::entry;
-use fixed::types::I30F2;
 use lsm303agr::Lsm303agr;
 use microbit::{
     board::Board,
@@ -46,9 +45,8 @@ fn main() -> ! {
         }
         rprintln!();
 
-        let deg_c: I30F2 = nrf_temp.measure();
-        let c = |v: u8| I30F2::from(v);
-        let deg_f = deg_c * c(9) / c(5) + c(32);
+        let deg_c: f32 = nrf_temp.measure().to_num();
+        let deg_f = deg_c * 9.0 / 5.0 + 32.0;
         rprintln!("cpu: {}", deg_f);
 
         rprintln!();

@@ -1,11 +1,10 @@
 [package]
-name = "mb2-template"
+name = "mb2-thermometer"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 cortex-m-rt = "0.7"
-fixed = "1.23.1"
 lsm303agr = "0.3"
 microbit-v2 = "0.13"
 rtt-target = "0.4"
