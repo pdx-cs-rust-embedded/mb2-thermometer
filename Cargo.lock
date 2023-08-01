@@ -167,7 +167,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "mb2-template"
+name = "mb2-thermometer"
 version = "0.1.0"
 dependencies = [
  "cortex-m",
