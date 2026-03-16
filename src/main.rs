@@ -16,7 +16,7 @@ use microbit::{
 fn main() -> ! {
     rtt_init_print!();
 
-    // Initialize the board and peripherals.
+    // Initialize the board and peripherals, including the I2C, timer, and LSM303.
     let board = Board::take().unwrap();
     let i2c = twim::Twim::new(
         board.TWIM0,
@@ -30,8 +30,8 @@ fn main() -> ! {
     lsm303.init().unwrap();
     lsm303.set_accel_mode_and_odr(
         &mut timer,
-        lsm303agr::AccelMode::Normal,
-        lsm303agr::AccelOutputDataRate::Hz1,
+        lsm303agr::AccelMode::Normal, // Normal power mode (10 bit)
+        lsm303agr::AccelOutputDataRate::Hz1, // Output data rate is 1 Hz
     ).unwrap();
 
     let mut nrf_temp = Temp::new(board.TEMP);
