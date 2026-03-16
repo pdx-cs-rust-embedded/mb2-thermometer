@@ -15,6 +15,8 @@ use microbit::{
 #[entry]
 fn main() -> ! {
     rtt_init_print!();
+
+    // Initialize the board and peripherals.
     let board = Board::take().unwrap();
     let i2c = twim::Twim::new(
         board.TWIM0,
@@ -24,6 +26,7 @@ fn main() -> ! {
     let mut timer = Timer::new(board.TIMER0);
     let mut lsm303 = Lsm303agr::new_with_i2c(i2c);
     
+    // Initialize the accelerometer.
     lsm303.init().unwrap();
     lsm303.set_accel_mode_and_odr(
         &mut timer,
@@ -34,9 +37,14 @@ fn main() -> ! {
     let mut nrf_temp = Temp::new(board.TEMP);
 
     loop {
+        // Get the temperature status and degrees in Celsius.
         let status = lsm303.temperature_status().unwrap();
         let deg_c = lsm303.temperature().unwrap().degrees_celsius();
-        rprint!("acc: {}", deg_c * 9.0 / 5.0 + 32.0);
+
+        // Show the temperature in Fahrenheit.
+        // If there is an overrun or new data is not available,
+        // show the appropriate notices.
+        rprint!("acc: {}", deg_c * 9.0 / 5.0 + 32.0); 
         if status.overrun() {
             rprint!(" (overrun)");
         }
@@ -45,6 +53,7 @@ fn main() -> ! {
         }
         rprintln!();
 
+        // Use the CPU to measure temperature in Celsius and Fahrenheit.
         let deg_c: f32 = nrf_temp.measure().to_num();
         let deg_f = deg_c * 9.0 / 5.0 + 32.0;
         rprintln!("cpu: {}", deg_f);

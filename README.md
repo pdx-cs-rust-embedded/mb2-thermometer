@@ -10,6 +10,10 @@ temperature unit and the CPU temperature unit are supported.
 * The `twim` branch does raw i2c for the LSM303AGR to
   demonstrate that process.
 
+## Build and Run
+
+Compile and run with `cargo embed --release`.
+
 ## Acknowledgements
 
 Thanks to the authors of the `lsm303agr` crate. It is a
