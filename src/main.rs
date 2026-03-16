@@ -8,7 +8,7 @@ use cortex_m_rt::entry;
 use lsm303agr::Lsm303agr;
 use microbit::{
     board::Board,
-    hal::{prelude::*, Temp, Timer, twim},
+    hal::{prelude::*, twim, Temp, Timer},
     pac::twim0::frequency::FREQUENCY_A,
 };
 
@@ -18,21 +18,19 @@ fn main() -> ! {
 
     // Initialize the board and peripherals, including the I2C, timer, and LSM303.
     let board = Board::take().unwrap();
-    let i2c = twim::Twim::new(
-        board.TWIM0,
-        board.i2c_internal.into(),
-        FREQUENCY_A::K100,
-    );
+    let i2c = twim::Twim::new(board.TWIM0, board.i2c_internal.into(), FREQUENCY_A::K100);
     let mut timer = Timer::new(board.TIMER0);
     let mut lsm303 = Lsm303agr::new_with_i2c(i2c);
-    
+
     // Initialize the accelerometer.
     lsm303.init().unwrap();
-    lsm303.set_accel_mode_and_odr(
-        &mut timer,
-        lsm303agr::AccelMode::Normal, // Normal power mode (10 bit)
-        lsm303agr::AccelOutputDataRate::Hz1, // Output data rate is 1 Hz
-    ).unwrap();
+    lsm303
+        .set_accel_mode_and_odr(
+            &mut timer,
+            lsm303agr::AccelMode::Normal, // Normal power mode (10 bit)
+            lsm303agr::AccelOutputDataRate::Hz1, // Output data rate is 1 Hz
+        )
+        .unwrap();
 
     let mut nrf_temp = Temp::new(board.TEMP);
 
@@ -44,7 +42,7 @@ fn main() -> ! {
         // Show the temperature in Fahrenheit.
         // If there is an overrun or new data is not available,
         // show the appropriate notices.
-        rprint!("acc: {}", deg_c * 9.0 / 5.0 + 32.0); 
+        rprint!("acc: {}", deg_c * 9.0 / 5.0 + 32.0);
         if status.overrun() {
             rprint!(" (overrun)");
         }
