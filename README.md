@@ -12,7 +12,7 @@ temperature unit and the CPU temperature unit are supported.
 
 ## Build and Run
 
-Compile and run with `cargo embed --release`.
+Compile and run with `cargo embed --release`. To compile and run in debug mode, type `cargo embed`.
 
 ## Acknowledgements
 
