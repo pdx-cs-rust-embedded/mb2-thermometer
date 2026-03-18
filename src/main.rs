@@ -13,6 +13,7 @@ use microbit::{
     pac::twim0::frequency::FREQUENCY_A,
 };
 
+// MB2 display - Celsius
 const C_DISPLAY: [[u8; 5]; 5] = [
     [1, 0, 1, 1, 1],
     [0, 0, 1, 0, 0],
@@ -21,6 +22,7 @@ const C_DISPLAY: [[u8; 5]; 5] = [
     [0, 0, 1, 1, 1],
 ];
 
+// MB2 display - Fahrenheit
 const F_DISPLAY: [[u8; 5]; 5] = [
     [1, 0, 1, 1, 1],
     [0, 0, 1, 0, 0],
@@ -63,12 +65,14 @@ fn main() -> ! {
         let deg_c = lsm303.temperature().unwrap().degrees_celsius();
         let deg_f1 = deg_c * 9.0 / 5.0 + 32.0;
 
+        // if the left button is pressed, switch to Fahrenheit or Celsius based on the current setting
         if left_button.is_low().unwrap() && !is_celsius {
             is_celsius = true;
         } else if left_button.is_low().unwrap() && is_celsius {
             is_celsius = false;
         }
 
+        // if the right button is pressed, switch to Fahrenheit or Celsius based on the current setting
         if right_button.is_low().unwrap() && !is_celsius {
             is_celsius = true;
         } else if right_button.is_low().unwrap() && is_celsius {
