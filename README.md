@@ -2,7 +2,8 @@
 Bart Massey 2023
 
 This code prints the current temperature of chips on the
-MicroBit v2 in °F once per second.  The LSM303AGR
+MicroBit v2 in °F or °C once per second. The user can press either button on the MicroBit v2
+to change the measurement setting. The LSM303AGR
 temperature unit and the CPU temperature unit are supported.
 
 * The `main` branch uses the `lsm303agr` crate for the LSM303AGR.
