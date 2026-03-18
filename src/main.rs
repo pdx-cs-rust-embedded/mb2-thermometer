@@ -8,9 +8,18 @@ use cortex_m_rt::entry;
 use lsm303agr::Lsm303agr;
 use microbit::{
     board::Board,
-    hal::{prelude::*, twim, Temp, Timer},
+    display::blocking::Display,
+    hal::{twim, Temp, Timer},
     pac::twim0::frequency::FREQUENCY_A,
 };
+
+const F_DISPLAY: [[u8; 5]; 5] = [
+    [1, 0, 1, 1, 1],
+    [0, 0, 1, 0, 0],
+    [0, 0, 1, 1, 1],
+    [0, 0, 1, 0, 0],
+    [0, 0, 1, 0, 0],
+];
 
 #[entry]
 fn main() -> ! {
@@ -21,6 +30,7 @@ fn main() -> ! {
     let i2c = twim::Twim::new(board.TWIM0, board.i2c_internal.into(), FREQUENCY_A::K100);
     let mut timer = Timer::new(board.TIMER0);
     let mut lsm303 = Lsm303agr::new_with_i2c(i2c);
+    let mut display = Display::new(board.display_pins);
 
     // Initialize the accelerometer.
     lsm303.init().unwrap();
@@ -57,6 +67,8 @@ fn main() -> ! {
         rprintln!("cpu: {}", deg_f);
 
         rprintln!();
-        timer.delay_ms(1000u16);
+
+        // show the blocking display
+        display.show(&mut timer, F_DISPLAY, 1000);
     }
 }
