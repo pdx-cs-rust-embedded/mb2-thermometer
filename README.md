@@ -26,6 +26,9 @@ Embedded Discovery Book for the Microbit v2, those examples
 were definitely the inspiration for writing the initial
 version of this.
 
+Another acknowledgement to Claude Code for suggesting code improvements 
+that cargo clippy missed.
+
 # License
 
 This work is licensed under the "MIT License". Please see the file
