@@ -13,23 +13,96 @@ use microbit::{
     pac::twim0::frequency::FREQUENCY_A,
 };
 
-// MB2 display - Celsius
-const C_DISPLAY: [[u8; 5]; 5] = [
-    [1, 0, 1, 1, 1],
-    [0, 0, 1, 0, 0],
-    [0, 0, 1, 0, 0],
-    [0, 0, 1, 0, 0],
-    [0, 0, 1, 1, 1],
-];
+// Convert the temperature value into an LED display
+// that can be shown on the microbit.
+// Due to LED size limitations, there are not enough lights to fully display a 2 digit number.
+// Another limitation is that the right digit does not update. This may be fixed in the future.
+//
+// The middle column is blanked out to separate the two digits.
+// The left two columns are for the second digit.
+// The right two columns are for the first digit.
+//
+// For testing purposes, the current temperature range is 20 to 90 degrees.
+//
+// For reference: 32 degrees F is 0 degrees C
+// 68 degrees F (room temp) is 20 degrees C
+fn show_temp_val(temp_val: f32) -> [[u8; 5]; 5] {
+    // Temperature is between 20 and 30 C or F
+    if temp_val >= 20.0 && temp_val < 30.0 {
+        return [
+            [1, 1, 0, 1, 1],
+            [0, 1, 0, 1, 1],
+            [0, 1, 0, 1, 1],
+            [1, 0, 0, 1, 1],
+            [1, 1, 0, 1, 1],
+        ];
+    // temperature is between 30 and 40 C or F
+    } else if temp_val >= 30.0 && temp_val < 40.0 {
+        return [
+            [1, 1, 0, 1, 1],
+            [0, 1, 0, 1, 1],
+            [1, 1, 0, 1, 1],
+            [0, 1, 0, 1, 1],
+            [1, 1, 0, 1, 1],
+        ];
+    // temperature is between 40 and 50 C or F
+    } else if temp_val >= 40.0 && temp_val < 50.0 {
+        return [
+            [0, 1, 0, 1, 1],
+            [1, 1, 0, 1, 1],
+            [1, 1, 0, 1, 1],
+            [0, 1, 0, 1, 1],
+            [0, 1, 0, 1, 1],
+        ];
+    // temperature is between 50 and 60 C or F
+    } else if temp_val >= 50.0 && temp_val < 60.0 {
+        return [
+            [1, 1, 0, 1, 1],
+            [1, 0, 0, 1, 1],
+            [1, 1, 0, 1, 1],
+            [0, 1, 0, 1, 1],
+            [1, 1, 0, 1, 1],
+        ];
 
-// MB2 display - Fahrenheit
-const F_DISPLAY: [[u8; 5]; 5] = [
-    [1, 0, 1, 1, 1],
-    [0, 0, 1, 0, 0],
-    [0, 0, 1, 1, 1],
-    [0, 0, 1, 0, 0],
-    [0, 0, 1, 0, 0],
-];
+    // temperature is between 60 and 70 C or F
+    } else if temp_val >= 60.0 && temp_val < 70.0 {
+        return [
+            [1, 1, 0, 1, 1],
+            [1, 0, 0, 1, 1],
+            [1, 1, 0, 1, 1],
+            [1, 1, 0, 1, 1],
+            [1, 1, 0, 1, 1],
+        ];
+
+    // temperature is between 70 and 80 C or F
+    } else if temp_val >= 70.0 && temp_val < 80.0 {
+        return [
+            [1, 1, 0, 1, 1],
+            [0, 1, 0, 1, 1],
+            [0, 1, 0, 1, 1],
+            [1, 0, 0, 1, 1],
+            [1, 0, 0, 1, 1],
+        ];
+    // temperature is between 80 and 90 C or F
+    } else if temp_val >= 80.0 && temp_val < 90.0 {
+        return [
+            [1, 1, 0, 1, 1],
+            [1, 1, 0, 1, 1],
+            [0, 0, 0, 1, 1],
+            [1, 1, 0, 1, 1],
+            [1, 1, 0, 1, 1],
+        ];
+    // temperature is not in the ranges above, show a blank LED display.
+    } else {
+        return [
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+        ];
+    }
+}
 
 #[entry]
 fn main() -> ! {
@@ -96,10 +169,11 @@ fn main() -> ! {
         rprintln!();
 
         // show the blocking display
-        if is_celsius {
-            display.show(&mut timer, C_DISPLAY, 1000);
-        } else {
-            display.show(&mut timer, F_DISPLAY, 1000);
+        // with a temperature value.
+        let mut temp_val = deg_c;
+        if !is_celsius {
+            temp_val = deg_f;
         }
+        display.show(&mut timer, show_temp_val(temp_val), 1000);
     }
 }
