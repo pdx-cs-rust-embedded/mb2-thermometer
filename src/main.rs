@@ -41,21 +41,14 @@ fn main() -> ! {
     let mut timer = Timer::new(board.TIMER0);
     let mut lsm303 = Lsm303agr::new_with_i2c(i2c);
     let mut display = Display::new(board.display_pins);
-    let left_button = board.buttons.button_a;
-    let right_button = board.buttons.button_b;
+    let fahrenheit_button = board.buttons.button_a;
+    let celsius_button = board.buttons.button_b;
 
     // Determine if the user is viewing temps in Celsius or Fahrenheit
     let mut is_celsius = false;
 
     // Initialize the accelerometer.
     lsm303.init().unwrap();
-    lsm303
-        .set_accel_mode_and_odr(
-            &mut timer,
-            lsm303agr::AccelMode::Normal, // Normal power mode (10 bit)
-            lsm303agr::AccelOutputDataRate::Hz1, // Output data rate is 1 Hz
-        )
-        .unwrap();
 
     let mut nrf_temp = Temp::new(board.TEMP);
 
@@ -63,20 +56,16 @@ fn main() -> ! {
         // Get the temperature status and degrees in Celsius and Fahrenheit.
         let status = lsm303.temperature_status().unwrap();
         let deg_c = lsm303.temperature().unwrap().degrees_celsius();
-        let deg_f1 = deg_c * 9.0 / 5.0 + 32.0;
+        let deg_f1 = deg_c * 9.0 / 5.0 + 32.0; // store the Fahrenheit calculation in a variable
 
-        // if the left button is pressed, switch to Fahrenheit or Celsius based on the current setting
-        if left_button.is_low().unwrap() && !is_celsius {
-            is_celsius = true;
-        } else if left_button.is_low().unwrap() && is_celsius {
+        // if the left button is pressed, switch to Fahrenheit.
+        if fahrenheit_button.is_low().unwrap() && is_celsius {
             is_celsius = false;
         }
 
-        // if the right button is pressed, switch to Fahrenheit or Celsius based on the current setting
-        if right_button.is_low().unwrap() && !is_celsius {
+        // if the right button is pressed, switch to Celsius
+        if celsius_button.is_low().unwrap() && !is_celsius {
             is_celsius = true;
-        } else if right_button.is_low().unwrap() && is_celsius {
-            is_celsius = false;
         }
 
         // Show the temperature in Fahrenheit or Celsius.
